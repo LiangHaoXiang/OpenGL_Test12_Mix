@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		AB9DCAA426B006200076B21B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB9DCAA326B006200076B21B /* main.cpp */; };
+		AB9DCAAC26B006380076B21B /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB9DCAAB26B006380076B21B /* libGLEW.dylib */; };
+		AB9DCAAE26B0063B0076B21B /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB9DCAAD26B0063B0076B21B /* libglfw.dylib */; };
+		AB9DCAB026B007480076B21B /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = AB9DCAAF26B007480076B21B /* glad.c */; };
+		AB9DCAB526B007560076B21B /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB9DCAB326B007560076B21B /* Camera.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +29,15 @@
 /* Begin PBXFileReference section */
 		AB9DCAA026B006200076B21B /* OpenGL_Test12_Mix */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OpenGL_Test12_Mix; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB9DCAA326B006200076B21B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		AB9DCAAB26B006380076B21B /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../../glew/2.2.0_1/lib/libGLEW.dylib; sourceTree = "<group>"; };
+		AB9DCAAD26B0063B0076B21B /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = ../../../glfw/3.3.4/lib/libglfw.dylib; sourceTree = "<group>"; };
+		AB9DCAAF26B007480076B21B /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../../glad/src/glad.c; sourceTree = "<group>"; };
+		AB9DCAB126B007560076B21B /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
+		AB9DCAB226B007560076B21B /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
+		AB9DCAB326B007560076B21B /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		AB9DCAB426B007560076B21B /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		AB9DCABD26B007630076B21B /* LightVertexShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LightVertexShader.cpp; sourceTree = "<group>"; };
+		AB9DCABE26B007630076B21B /* LightFragmentShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LightFragmentShader.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +45,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB9DCAAC26B006380076B21B /* libGLEW.dylib in Frameworks */,
+				AB9DCAAE26B0063B0076B21B /* libglfw.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +58,7 @@
 			children = (
 				AB9DCAA226B006200076B21B /* OpenGL_Test12_Mix */,
 				AB9DCAA126B006200076B21B /* Products */,
+				AB9DCAAA26B006380076B21B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -57,9 +73,33 @@
 		AB9DCAA226B006200076B21B /* OpenGL_Test12_Mix */ = {
 			isa = PBXGroup;
 			children = (
+				AB9DCABC26B007630076B21B /* LightShader */,
+				AB9DCAB326B007560076B21B /* Camera.cpp */,
+				AB9DCAB126B007560076B21B /* Camera.hpp */,
+				AB9DCAB426B007560076B21B /* Shader.h */,
+				AB9DCAB226B007560076B21B /* stb_image.h */,
+				AB9DCAAF26B007480076B21B /* glad.c */,
 				AB9DCAA326B006200076B21B /* main.cpp */,
 			);
 			path = OpenGL_Test12_Mix;
+			sourceTree = "<group>";
+		};
+		AB9DCAAA26B006380076B21B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AB9DCAAD26B0063B0076B21B /* libglfw.dylib */,
+				AB9DCAAB26B006380076B21B /* libGLEW.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AB9DCABC26B007630076B21B /* LightShader */ = {
+			isa = PBXGroup;
+			children = (
+				AB9DCABD26B007630076B21B /* LightVertexShader.cpp */,
+				AB9DCABE26B007630076B21B /* LightFragmentShader.cpp */,
+			);
+			path = LightShader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,6 +159,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB9DCAA426B006200076B21B /* main.cpp in Sources */,
+				AB9DCAB526B007560076B21B /* Camera.cpp in Sources */,
+				AB9DCAB026B007480076B21B /* glad.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +282,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../glad/include\"",
+					"\"$(SRCROOT)/../../../glew/2.2.0_1/include\"",
+					"\"$(SRCROOT)/../../../glfw/3.3.4/include\"",
+					"\"$(SRCROOT)/../../../glm/0.9.9.8/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../glew/2.2.0_1/lib\"",
+					"\"$(SRCROOT)/../../../glfw/3.3.4/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -248,6 +300,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../glad/include\"",
+					"\"$(SRCROOT)/../../../glew/2.2.0_1/include\"",
+					"\"$(SRCROOT)/../../../glfw/3.3.4/include\"",
+					"\"$(SRCROOT)/../../../glm/0.9.9.8/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../glew/2.2.0_1/lib\"",
+					"\"$(SRCROOT)/../../../glfw/3.3.4/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
