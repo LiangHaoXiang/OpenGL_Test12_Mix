@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Camera.hpp"
 #include <vector>
+#include <map>
 
 using namespace std;
 using namespace glm;
@@ -20,7 +21,8 @@ void processInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-unsigned int loadTexture(const char *path, GLint param);
+unsigned int loadTexture(const char *path);
+bool cmp_by_value(pair<int, float> a, pair<int, float> b);
 
 // settings 屏幕宽高
 const unsigned int SCR_WIDTH = 800;
@@ -89,6 +91,7 @@ float planeVertices[] = {
    -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
     5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 };
+//草
 float grassVertices[] = {
     // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
     0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
@@ -99,7 +102,17 @@ float grassVertices[] = {
     1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
     1.0f,  0.5f,  0.0f,  1.0f,  0.0f
 };
+//玻璃
+float glassVertices[] = {
+    // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+    0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+    0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+    1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
 
+    0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+    1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+    1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+};
 
 int main()
 {
@@ -141,6 +154,10 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+    glBlendEquation(GL_FUNC_ADD);//默认选项是add，也可以不写这句
     // build and compile our shader program
     // ------------------------------------
     char* headDir = "/Users/haoxiangliang/Desktop/代码草稿/OpenGL/OpenGL_Test12_Mix/OpenGL_Test12_Mix/";
@@ -185,20 +202,38 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
     
-    vector<vec3> vegetation;
-    vegetation.push_back(vec3(-1.5f,  0.0f, -0.48f));
-    vegetation.push_back(vec3( 1.5f,  0.0f,  0.51f));
-    vegetation.push_back(vec3( 0.0f,  0.0f,  0.7f));
-    vegetation.push_back(vec3(-0.3f,  0.0f, -2.3f));
-    vegetation.push_back(vec3( 0.5f,  0.0f, -0.6f));
+    // glass VAO
+    unsigned int glassVAO, glassVBO;
+    glGenVertexArrays(1, &glassVAO);
+    glGenBuffers(1, &glassVBO);
+    glBindVertexArray(glassVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, glassVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glassVertices), &glassVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
     
+    vector<vec3> grass;
+    grass.push_back(vec3(-4.0f, 0.0f, 4.0f));
+    grass.push_back(vec3(-4.5f, 0.0f, 2.5f));
+    grass.push_back(vec3(-4.8f, 0.0f, 3.5f));
+    grass.push_back(vec3(-4.2f, 0.0f, 3.0f));
+    grass.push_back(vec3(-3.5f, 0.0f, 3.2f));
     
+    vector<vec3> glass;
+    glass.push_back(vec3(-1.5f,  0.0f, -0.48f));
+    glass.push_back(vec3( 1.5f,  0.0f,  0.51f));
+    glass.push_back(vec3( 0.0f,  0.0f,  0.7f));
+    glass.push_back(vec3(-0.3f,  0.0f, -2.3f));
+    glass.push_back(vec3( 0.5f,  0.0f, -0.6f));
     // load textures
     // -------------
-    unsigned int cubeTexture  = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/box.jpeg", GL_REPEAT);
-    unsigned int floorTexture = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/floor5.jpeg", GL_REPEAT);
-    unsigned int grassTexture = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/grass.png", GL_CLAMP_TO_EDGE);
-
+    unsigned int cubeTexture  = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/box.jpeg");
+    unsigned int floorTexture = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/floor5.jpeg");
+    unsigned int grassTexture = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/grass.png");
+    unsigned int glassTexture = loadTexture("/Users/haoxiangliang/Desktop/未命名文件夹/blending_transparent_window.png");
     // shader configuration
     // --------------------
     shader.use();
@@ -233,11 +268,11 @@ int main()
         glBindVertexArray(cubeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, cubeTexture);
-        model = translate(model, vec3(-2.0f, 0.0f, -1.0f));
+        model = translate(model, vec3(-1.0f, 0.0f, -1.0f));
         shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         model = mat4(1.0f);
-        model = translate(model, vec3(3.0f, 0.0f, 0.0f));
+        model = translate(model, vec3(2.0f, 0.0f, 0.0f));
         shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // floor
@@ -247,15 +282,48 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         // grass
+        //为了实现 在草后也要看到草，需要对物体从远到近排序依次渲染。
         glBindVertexArray(grassVAO);
         glBindTexture(GL_TEXTURE_2D, grassTexture);
-        for (unsigned int i = 0; i < vegetation.size(); i++)
+        map<unsigned int, float> distanceGrassMap;
+        for (unsigned int i = 0; i < grass.size(); i++)
         {
+            float dis = length(camera.Position - grass[i]);
+            distanceGrassMap[i] = dis;
+        }
+        vector<pair<int, float>> disGrassPair(distanceGrassMap.begin(), distanceGrassMap.end());
+        sort(begin(disGrassPair), end(disGrassPair), cmp_by_value);
+        
+        for (unsigned int i = 0; i < disGrassPair.size(); i++)
+        {
+            int index = disGrassPair[i].first;
             model = mat4(1.0f);
-            model = translate(model, vegetation[i]);
+            model = translate(model, grass[index]);
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
+        // glass
+        //为了实现 在玻璃窗后也要看到玻璃窗，需要对物体从远到近排序依次渲染。
+        glBindVertexArray(glassVAO);
+        glBindTexture(GL_TEXTURE_2D, glassTexture);
+        map<unsigned int, float> distanceMap;//草和玻璃都存在一个字典中
+        for (unsigned int i = 0; i < glass.size(); i++)
+        {
+            float dis = length(camera.Position - glass[i]);
+            distanceMap[i] = dis;
+        }
+        vector<pair<int, float>> disPair(distanceMap.begin(), distanceMap.end());
+        sort(begin(disPair), end(disPair), cmp_by_value);
+        
+        for (unsigned int i = 0; i < disPair.size(); i++)
+        {
+            int index = disPair[i].first;
+            model = mat4(1.0f);
+            model = translate(model, glass[index]);
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+        
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -339,7 +407,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
-unsigned int loadTexture(char const * path, GLint param)
+unsigned int loadTexture(char const * path)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -360,8 +428,8 @@ unsigned int loadTexture(char const * path, GLint param)
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, param);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, param);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -374,4 +442,9 @@ unsigned int loadTexture(char const * path, GLint param)
     }
 
     return textureID;
+}
+
+bool cmp_by_value(pair<int, float> a, pair<int, float> b)
+{
+    return a.second > b.second;
 }
